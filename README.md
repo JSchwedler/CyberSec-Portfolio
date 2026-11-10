@@ -1,6 +1,6 @@
 # Cybersecurity Portfolio
 Willkommen in meinem Cybersecurity-Portfolio.<br>
-Hier sammle ich Notizen, Lösungsansätze und wichtige Informationen meines Lernweges. Aktuell nutze ich pwn.college und TryHackMe.
+Hier sammle ich Notizen, Lösungsansätze und wichtige Informationen meines Lernweges. Aktuell nutze ich [pwn.college](https://pwn.college/) und [TryHackMe](https://tryhackme.com/). Mehr dazu in den jeweiligen Unterordnern.
 
 ## Aktueller Fokus
 - Linux-Basics
