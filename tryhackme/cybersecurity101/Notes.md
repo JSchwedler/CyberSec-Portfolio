@@ -16,7 +16,32 @@ _VirusTotal_ nutzt mehr als 70 Antiviren-Engines & Website Scanners, mit denen m
 _CVE_ steht für _Common Vulnerabilities and Exposures_ und ist quasi ein Nachschlagewerk bekannter Schwachstellen. Eine CVE besteht aus Name (CVE-YEAR-NUMBER) und CVSS Score (gibt Impact, Complexity & Availability an, um das Risk Level zu bestimmen). Diese Informationen sind in der _ExploitDB_ angegeben, auch bei Proof of Concepts (PoCs).
 
 
+## Windows Fundamentals
+System Variable für System32-Ordner: `%windir%`<br>
+_UAC_ steht für _User Account Control_<br>
+_Ctrl+Shift+Esc_ öffnet Task Manager <br>
+_TPM_ steht für _Trusted Platform Module_ ist eine Technologie, welche Hardware-basierte, sicherheitsbezogene Funktionen bereitstellt. Ein TPM Chip ist ein sicherer Krypto-Prozessor, der kryptografische Operationen ausführt. Dieser besitzt mehrere physische Sicherheitsmechanismen, um Manipulation zu verhindern.<br>
+_Volume Shadow Copy Serbice (VSS)_ ist ein konsistenter Snapshot von Daten.<br>
+_Active Directory (AD)_ ist ein  Repository zum zentralisierten Administrieren von einem Windows Computer Netzwerk. Der Server, der das Repo ausführt, heißt _Domain Controller (DC)_.<br>
+Im AD gibt es _Organizational Units (OUs)_, um die Objekte des Netzwerkes besser zu organisieren. Mit Hilfe des ADs können gewisse Controls an andere Objekte delegiert werden, z.B. dass bestimmte User andere User verwalten dürfen, um bei diesen bei Problemen z.B. das Passwort zurück zu setzen, was für IT Support einer Firma sehr wichtig ist.<br>
+_Group Policy Objects (GPO)_ dient zum Anwenden verschiedener Policies für OUs, sodass man dies nicht alles einzeln manuell machen muss. Es gibt auch eine Default Domain Policy, welche den Bedürfnissen angepasst werden kann. GPOs werden über das Netzwerk via _SYSVOL_ geteilt.<br>
+Bei Windows Domänen werden Credentials in Domain Controllern gespeichert. Beim Login muss via Service beim Domain Controller angefragt werden, ob die Credentials passen. Für diese Netzwerk Authentication gibt es zwei Protokolle: Kerberos (default) und NetNTLM (legacy). <br>
+### Authentication mit Kerberos:<br>
+- Username und encrypteter Timestamp, welche mit einem Key, der vom Passwort abgeleitet wurde, verschlüsselt wurde, werden an das Key Distribution Center (KDC) gesendet. Dieses sendet ein Ticket Granting Ticket (TGT) zurück, wodurch weitere Anfragen für spezifische Services möglich sind. Zusätzlich wird auch ein Session key gesendet.
+- Ticket Granting Service (TGS) für das Verbinden zu einem Netzwerkservice, z.B eine Website oder DB. Für den Request für das TGS muss der User wieder Username, encrypted Timestamp, sowie das TGT und einen Service Principal Name (SPN) senden. Der SPN gibt an, welcher Service beabsichtigt ist, sowie der entsprechende Server Name.
+### Authentication mit NetNTLM
+nutzt ein Challenge-Response Mechanismus:
+1. Client sendet eine Authentifizierungsanfrage an den Server.
+2. Server erzeugt eine Zufallszahl (Challenge) und sendet sie an den Client.
+3. Client kombiniert den NTLM-Passwort-Hash mit der Challenge und sendet die daraus entstandene Response an den Server.
+4. Server leitet Challenge und Response zur Prüfung an den Domain Controller weiter.
+5. Der Domain Controller berechnet die erwartete Response neu und vergleicht sie mit der des Clients: stimmen sie überein, ist die Authentifizierung erfolgreich.
+6. Das Ergebnis wird an den Server und anschließend an den Client zurückgegeben.
 
+### Trees
+Wenn einzelne Domäne nicht mehr ausreicht, legt man mehrere Domänen an und verknüpft sie als Tree.
+### Forests
+Wenn man mehrere Trees miteinander verknüpft, nennt man es Forest.
 ## Networking
 ### OSI Modell
 
@@ -131,3 +156,4 @@ manche Module unterstützen `check`. Dies dient zum Prüfen, ob das Zielsystem u
 `background` wird verwendet, um aus anderen Kontexten (z.B. meterpreter) zurück zu _msfconsole_ ODER Strg+Z<br>
 `sessions` zeigt alle aktuellen Sessions an<br>
 `session -i SESSIONID` zum fortsetzen der Session mit der Id SESSIONID<br>
+
