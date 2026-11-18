@@ -2,6 +2,9 @@
 Diese Datei enthält die Informationen und Erkenntnisse aus dem _Cyber Security 101_-Path von TryHackMe.
 ## Schnellreferenz
 - [Security Intro](#security-intro)
+- [Linux Fundamentals](#linux-fundamentals)
+- [Windows Fundamentals](#windows-fundamentals)
+- [Command Line](#command-line)
 - [Networking](#networking)
 - [Exploitation Basics](#exploitation-basics)
 
@@ -15,6 +18,22 @@ _Shodan_ ist eine Suchmaschine für IoT-Geräte bzw. für alles, was öffentlich
 _VirusTotal_ nutzt mehr als 70 Antiviren-Engines & Website Scanners, mit denen man Dateien, URL, Domänen oder File Hashes scannen kann.<br>
 _CVE_ steht für _Common Vulnerabilities and Exposures_ und ist quasi ein Nachschlagewerk bekannter Schwachstellen. Eine CVE besteht aus Name (CVE-YEAR-NUMBER) und CVSS Score (gibt Impact, Complexity & Availability an, um das Risk Level zu bestimmen). Diese Informationen sind in der _ExploitDB_ angegeben, auch bei Proof of Concepts (PoCs).
 
+## Linux Fundamentals
+`wget URL` to download File from _URL_ <br>
+`/webserver# python3 -m http.server` to start a webserver on the machine -> can download via _wget_<br>
+`systemctl OPTION SERVICE` zum Interagieren mit dem systemd Prozess. Dabei wird OPTION ersetzt mit: _start_, _stop_, _enable_, _disable_ oder _status_. _SERVICE_ steht für den Namen des entsprechenden Services
+
+### Cron
+Man kann via`crontab` eine Automatisierung auf dem System einrichten. Dabei wird dann nach folgendem Schema ein Eintrag angelegt:<br>
+`MIN HOUR DOM MON DOW CMD`<br>
+_MIN_ steht für die Minuten, wann es ausgeführt werden soll<br>
+_HOUR_ steht für die Stunden, wann es ausgeführt werden soll<br>
+_DOM_ steht für _Day of Month_, also wann es im Monat ausgeführt werden soll<br>
+_MON_ steht für den Monat, wann es ausgeführt werden soll<br>
+_DOW_ steht für _Day of Week_, also an welchem Wochentag es ausgeführt werden soll<br>
+_CMD_ steht für den Befehl, der durch die Automatisierung ausgeführt werden soll<br>
+Dabei ist `*` eine wildcard für die ersten fünf Optionen, also wenn diese nicht konkret gesetzt werden. <br>
+Ein Beispiel: `0 */12 * * * echo "12 hours have passed"` Dieser Eintrag führt dazu, dass aller 12 Stunden "12 hours have passed" ausgegeben wird, unabhängig vom Wochen- oder Monatstag<br>
 
 ## Windows Fundamentals
 System Variable für System32-Ordner: `%windir%`<br>
@@ -37,14 +56,70 @@ nutzt ein Challenge-Response Mechanismus:
 4. Server leitet Challenge und Response zur Prüfung an den Domain Controller weiter.
 5. Der Domain Controller berechnet die erwartete Response neu und vergleicht sie mit der des Clients: stimmen sie überein, ist die Authentifizierung erfolgreich.
 6. Das Ergebnis wird an den Server und anschließend an den Client zurückgegeben.
-
 ### Trees
 Wenn einzelne Domäne nicht mehr ausreicht, legt man mehrere Domänen an und verknüpft sie als Tree.
 ### Forests
 Wenn man mehrere Trees miteinander verknüpft, nennt man es Forest.
+
+## Command Line
+### Windows
+#### CMD
+`set` zeigt welche Pfade für die CMD Commands hinterlegt sind<br>
+`ver` zeigt die Windows Version<br>
+`systeminfo` zeigt Systeminformationen an<br>
+Wenn ein Output im CMD zu lang ist, kann man `CommandDerLangenOutputGeneriert | more` ausführen, wodurch der Output dann seitenweise angezeigt wird.<br>
+`cls` cleared tden CMD Screen<br>
+`ipconfig /all` zeigt Informationen betreffend des Netzwerks des Systems an<br>
+`ping TARGET` prüft die Erreichbarkeit von _TARGET_, wobei dies eine IP-Adresse oder einer URL sein kann<br>
+`tracert TARGET` zeigt die Route zum Ziel _TARGET_, inklusive alle Zwischenpunkte<br>
+`nslookup URL` zeigt die entsprechenden Adressen und Servernamen von der angegebenen _URL_ an<br>
+`netstat` zeigt aktuelle Verbindungen und listening ports des Systems an. Dabei gibt es noch folgende Parameter: `-a` zeigt alle laufenden Verbindungen und listening ports, `-b` zeigt die jeweils dazugehörigen Programme, `-o` zeigt jeweils die Prozess-ID (PID) zu den Verbindungen, `-n` nutzt eine numerische Form für Adressen und Port-Nummern. Man kann es auch verbinden zu `netstat -abon`<br> 
+`dir /a` zeigt versteckte und Systemfiles an<br>
+`dir /s` zeigt Files im aktuellen Verzeichnis und allen Unterverzeichnissen an<br>
+`tree` zeigt alle Kind-Verzeichnisse und Unterverzeichnisse visuell an<br>
+`type FILE` zeigt den Inhalt des angegeben _FILES_ an<br>
+`copy SOURCE DESTINATION` kopiert von _SOURCE_ nach _DESTINATION_, analog verschieben mit `move`<br>
+`del FILE` oder `erase FILE` zum Löschen von _FILE_ 
+`tasklist` zeigt alle aktuell laufenden Prozesse an. Mittels `tasklist /FI "imagename eq sshd.exe"` Kann man bei den laufenden Prozessen nach Prozessen Filtern, welche den Image Name _sshd.exe_ haben.<br>
+#### Powershell
+Powershell nutzt _cmdlets_, was für _command-lets_ steht. Diese sind nach dem Schema _VerbSubstantiv_ aufgebaut und sind umfangreicher als normale Windows Commands, da sie z.B: erweiterte Datenänderungen ermöglichen.
+`Get-Content` holt den Inhalt der angegebenen Datei und zeigt ihn an<br> 
+`Set-Location` ändert das aktuelle Arbeitsverzeichnis entsprechend des angegebenen Pfades<br>
+`Get-Command` zeigt alle vorhandenen Befehle an. Dies kann noch durch den Zusatz `-CommandType "Function"` gefiltert werden, sdoass es nur noch Befehle anzeigt, die vom Typ _Function_ sind<br>
+`Get-Help COMMAND` zeigt die Hilfe zum Befehl _COMMAND_ an. Mit der Erweiterung `-examples` wird diese Information noch um Beispiele ergänzt<br>
+`Find-Module -Name "PowerShell*` nutzen, um Online nach CmdLets zu suchen, deren Namen mit _PowerShell_ beginnt<br>
+Im Anschluss kann das gefundene CmdLets via `Install-Module -Name "NAME"` installiert werden.
+`Get-ChildItem` zeigt, analog zu _dir_ (CMD) bzw. _ls_ (Unix-basiert), Dateien und Verzeichnisse vom im _-Path_ spezifizierten Verzeichnis. Ist dies nicht gesetzt, wird das aktuelle Arbeitsverzeichnis genutzt<br>
+`New-Item -Path "PATH" -ItemType "Directory"` erzeigt ein neues Verzeichnis am angegebenen Pfad _PATH_<br>
+`Remove-Item -Path "PATH"` löscht das Item an der Stelle _PATH_<br>
+`Copy-Item -Path "PATH" -Destination "PATH2"` kopiert die Datei von _PATH_ nach _PATH2_<br>
+Piping funktioniert, analog zu UNIX-basierten Systemen, mittels `CmdLets1 | CmdLets2`<br>
+`Sort-Object Length` sortiert entsprechend der Länge (Größe)<br>
+`Where-Object -Property "Extension" -eq "STRING"` sucht nach Objekten, die die angegebene Bedingung erfüllen, in diesem Fall wird nach Dateien gesucht, dessen Endungen (Extension) _STRING_ entsprechen. Es gibt _-ne_ als _not equal_, _-gt_ als _greater than_, _-ge_ als _greater than or equal_, _-lt_ als _less than_ und _le_ als _less than or equal_ <br>
+`Select-Object Name, Length` zeigt nur die angegebenen Eigenschaften, in diesem Fall Name und Größe<br>
+`Select-String - Path "PATH" -Pattern "STRING"` sucht an der Location _PATH_ in Dateien nach _STRING_<br>
+`Get-ComputerInfo` zeigt die Systeminformationen an<br>
+`Get-LocalUser` zeigt alle lokal vorhandenen User an<br>
+`Get-netIPConfiguration` zeigt detaillierte Informationen über die Netzwerkschnittstellen des Systems an<br>
+`Get-NetIPAddress` zeigt spezifische Informationen über die IP Adressen des Systems an<br>
+`Get-Process` zeigt übersichtlich Details zu allen laufenden Prozessen an <br>
+`Get-Service` zeigt Status aller Services auf dem System an, also ob running, stopped oder paused<br>
+`Get-NetTCPConnection` zeigt aktuelle TCP Verbindungen an<br>
+`Get-FileHash -Path "PATH"` erzeugt den Hashwert der in _PATH_ spezifizierten Datei an<br>
+`Invoke-Command` erlaubt remote management und automation, z.B. `Invoke-Command -ComputerName "NAME" -ScriptBlock {SCRIPT}` führt die Befehle in _SCRIPT_ auf dem Computer namens _NAME_ remote aus<br>
+### Linux
+gibt verschiedene Shells, z.B. `/bin/bash` und `/usr/bin/zsh` und _Fish_, permanent änderbar mittels `chsh -s PATH`, wobei Path den Pfad zur entsprechende Shell angibt
+`history` zeigt alle vergangenen Befehle an
+Eine Loop in einem Skript sieht wie folgt aus:
+```
+for i in {1..10};
+do
+echo $i
+done
+```
+
 ## Networking
 ### OSI Modell
-
 
 | Layer Number | Layer Name | Main Function | Example Protocols and Standards |
 |---|---|---|---|

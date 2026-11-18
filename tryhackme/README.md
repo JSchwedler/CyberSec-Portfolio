@@ -22,5 +22,5 @@ Dieser Bereich enthält meine Notizen, Übungen und Erkenntnisse zu [TryHackMe](
 - Defensive Security Tooling
 
 ## Aktueller Stand
-Modul _Cyber Security 101_ erfolgreich angefangen, aktueller Stand: ![17%](https://progress-bar.xyz/17) <br>
+Modul _Cyber Security 101_ erfolgreich angefangen, aktueller Stand: ![28%](https://progress-bar.xyz/28)<br>
 Mehrere Rooms erfolgreich abgeschlossen. 
